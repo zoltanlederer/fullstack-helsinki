@@ -16,6 +16,6 @@ const PersonForm = ({handleSubmit, newName, newNumber, nameInput, numberInput}) 
           </form>
       </div>
     )
-  }
+}
 
 export default PersonForm;
