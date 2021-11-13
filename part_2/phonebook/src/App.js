@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
+import personService from './services/persons'
 
 
 const App = () => {
@@ -11,11 +11,12 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
 
+
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -33,19 +34,50 @@ const App = () => {
         number: newNumber
       }
 
-      setPersons(persons.concat(newEntry))
-      setNewName('')
-      setNewNumber('')
+      personService
+        .create(newEntry)
+        .then(returnedPersons => {
+          setPersons(persons.concat(returnedPersons))
+          setNewName('')
+          setNewNumber('')
+        })
       
     } else {
-      alert(`${newName} is already added to phonebook`)    
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number?`)) {
+        const personToUpdate = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())
+        const id = personToUpdate[0].id;
+        const updated = {...personToUpdate[0], number: newNumber}
+
+        personService
+          .updateNumber(id, updated)
+          .then(updatePerson => {
+            const personsUpdate = [...persons]
+            const personIndex = persons.map(person => person.name.toLowerCase()).indexOf(newName.toLowerCase())
+            personsUpdate[personIndex] = updatePerson
+            
+            setPersons(personsUpdate)
+            setNewName('')
+            setNewNumber('')
+          })
+      }
     }
+  }
+
+  const handleDelete = (e) => {
+    const id = parseInt(e.target.id)    
+    if (window.confirm(`Delete ${e.target.dataset.name}?`)) {
+      personService
+      .deletePerson(id)
+      .then(() => {
+        setPersons(persons.filter(personId => personId.id !== id))
+      })
+    }    
   }
 
   // Filter
   const filterInput = (e) => {setNewFilter(e.target.value)}
 
- 
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -61,7 +93,7 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
-      <Persons persons={persons} filter={newFilter} />
+      <Persons persons={persons} filter={newFilter} handleDelete={(e) => handleDelete(e)} />
     </div>
   )
 }
