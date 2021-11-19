@@ -63,6 +63,17 @@ const App = () => {
             setNotificationType(null)
           }, 5000)
         })
+        .catch(error => {
+          const firstIndex = error.response.data.indexOf('ValidationError')
+          const lastIndex = error.response.data.indexOf('<br>')
+          const errorMsg = error.response.data.slice(firstIndex + 17, lastIndex)
+          setNotification(errorMsg)
+          setNotificationType('warning')
+          setTimeout(() => {
+            setNotification(null)
+            setNotificationType(null)
+          }, 5000)
+        })
     
     // If name already exist
     } else {
@@ -106,7 +117,7 @@ const App = () => {
   
   // Delete an entry
   const handleDelete = (e) => {
-    const id = parseInt(e.target.id)    
+    const id = e.target.id    
     if (window.confirm(`Delete ${e.target.dataset.name}?`)) {
       // Delete from the database
       personService
