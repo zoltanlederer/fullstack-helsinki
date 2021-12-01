@@ -49,11 +49,11 @@ test('id is an identifier', async () => {
     expect(contents[0]).toBeDefined()
 })
 
-
 test('a valid blog post can be added', async () => {
     const newPost = {
         title: 'The Truth',
         author: 'Miss Hanna',
+        url: 'http://www.thetruth.com',
         likes: 5,
       }
     
@@ -69,6 +69,34 @@ test('a valid blog post can be added', async () => {
     console.log(titles)
     expect(response.body).toHaveLength(initialBlogs.length + 1)
     expect(titles).toContain('The Truth')
+})
+
+test('the likes property is missing from the request when blog post added', async () => {
+    const newPost = {
+        title: 'Interstellar',
+        author: 'Thomas Gilligan',
+        url: 'http://www.interstellar.com'
+      }
+    
+    await api
+        .post('/api/blogs')
+        .send(newPost)
+        .expect(200)
+ 
+    const testPost = await Blog.findOne({ title: 'Interstellar' })
+    expect(testPost.likes).toBe(0)
+})
+
+test('verifies that if the title and url properties are missing from the request data', async () => {
+    const newPost = {
+        author: 'Bob Ross',
+        likes: 48
+      }
+    
+    await api
+        .post('/api/blogs')
+        .send(newPost)
+        .expect(400)
 })
 
 afterAll(() => {

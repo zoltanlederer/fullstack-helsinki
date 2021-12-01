@@ -11,11 +11,17 @@ blogsRouter.get('/', async (request, response) => {
     //   })
   })
   
-  blogsRouter.post('/', async (request, response) => {
+  blogsRouter.post('/', async (request, response, next) => {
     const blog = new Blog(request.body)
-  
-    const saveBlog = await blog.save()
-    response.json(saveBlog)
+    
+    try {
+      const saveBlog = await blog.save()
+      response.json(saveBlog)  
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+    
 
     // blog
     //   .save()
