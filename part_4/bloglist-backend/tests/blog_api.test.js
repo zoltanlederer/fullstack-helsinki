@@ -6,14 +6,12 @@ const Blog = require('../models/blog')
 
 const initialBlogs = [
     {
-        id: '1111111',
         title: 'JavaScript info',
         author: 'Mia Liu',
         url: 'https://javascript.info/',
         likes: 23,
     },
     {
-        id: '2222222',
         title: 'Fullstack open',
         author: 'Michael Bond',
         url: 'http://www.fullstackopen.com',
@@ -70,7 +68,6 @@ describe('addition of a new blog post', () => {
         const response = await api.get('/api/blogs')
         
         const titles = response.body.map(r => r.title)
-        console.log(titles)
         expect(response.body).toHaveLength(initialBlogs.length + 1)
         expect(titles).toContain('The Truth')
     })
@@ -107,7 +104,6 @@ describe('addition of a new blog post', () => {
 describe('deletion of a blog post', () => {
     test('succeeds with status code 204 if id is valid', async () => {
         const blogsAtStart = await Blog.find({})
-        console.log('blogsAtStart', blogsAtStart[0].id)
         const blogToDelete = blogsAtStart[0]
     
         await api
@@ -124,6 +120,26 @@ describe('deletion of a blog post', () => {
       })
 })
 
+
+describe('updating of an existed blog post', () => {
+    test('update the amount of likes for a blog post', async () => {
+        const blog = await Blog.find({})
+        const blogToUpdate = blog[0]
+        const blogUpdate = {
+            ...blogToUpdate,
+            likes: 99,
+        }
+
+        await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(blogUpdate)
+        .expect(200)
+
+        const blogAfterUpdate = await Blog.find({})
+        const checkNewLikes = blogAfterUpdate[0].likes
+        expect(checkNewLikes).toBe(99)
+    })
+})
 
 afterAll(() => {
     mongoose.connection.close()
