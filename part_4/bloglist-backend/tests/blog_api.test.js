@@ -29,75 +29,101 @@ beforeEach(async () => {
     await blogObject.save()
 })
 
-test('blog lists are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-}, 100000)
-
-test('all blog posts are returned', async () => {
-    const response = await api.get('/api/blogs')
-  
-    expect(response.body).toHaveLength(initialBlogs.length)
-})
-
-test('id is an identifier', async () => {
-    const response = await api.get('/api/blogs')
-
-    const contents = response.body.map(r => r.id)
-    expect(contents[0]).toBeDefined()
-})
-
-test('a valid blog post can be added', async () => {
-    const newPost = {
-        title: 'The Truth',
-        author: 'Miss Hanna',
-        url: 'http://www.thetruth.com',
-        likes: 5,
-      }
-    
+describe('when there is initially some blog posts saved', () => {
+    test('blog lists are returned as json', async () => {
     await api
-        .post('/api/blogs')
-        .send(newPost)
+        .get('/api/blogs')
         .expect(200)
         .expect('Content-Type', /application\/json/)
+    }, 100000)
+
+    test('all blog posts are returned', async () => {
+        const response = await api.get('/api/blogs')
     
-    const response = await api.get('/api/blogs')
-    
-    const titles = response.body.map(r => r.title)
-    console.log(titles)
-    expect(response.body).toHaveLength(initialBlogs.length + 1)
-    expect(titles).toContain('The Truth')
+        expect(response.body).toHaveLength(initialBlogs.length)
+    })
+
+    test('id is an identifier', async () => {
+        const response = await api.get('/api/blogs')
+
+        const contents = response.body.map(r => r.id)
+        expect(contents[0]).toBeDefined()
+    })
 })
 
-test('the likes property is missing from the request when blog post added', async () => {
-    const newPost = {
-        title: 'Interstellar',
-        author: 'Thomas Gilligan',
-        url: 'http://www.interstellar.com'
-      }
+
+describe('addition of a new blog post', () => {
+    test('a valid blog post can be added', async () => {
+        const newPost = {
+            title: 'The Truth',
+            author: 'Miss Hanna',
+            url: 'http://www.thetruth.com',
+            likes: 5,
+        }
+        
+        await api
+            .post('/api/blogs')
+            .send(newPost)
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
+        
+        const response = await api.get('/api/blogs')
+        
+        const titles = response.body.map(r => r.title)
+        console.log(titles)
+        expect(response.body).toHaveLength(initialBlogs.length + 1)
+        expect(titles).toContain('The Truth')
+    })
+
+    test('the likes property is missing from the request when blog post added', async () => {
+        const newPost = {
+            title: 'Interstellar',
+            author: 'Thomas Gilligan',
+            url: 'http://www.interstellar.com'
+        }
+        
+        await api
+            .post('/api/blogs')
+            .send(newPost)
+            .expect(200)
     
-    await api
-        .post('/api/blogs')
-        .send(newPost)
-        .expect(200)
- 
-    const testPost = await Blog.findOne({ title: 'Interstellar' })
-    expect(testPost.likes).toBe(0)
+        const testPost = await Blog.findOne({ title: 'Interstellar' })
+        expect(testPost.likes).toBe(0)
+    })
+
+    test('verifies that if the title and url properties are missing from the request data', async () => {
+        const newPost = {
+            author: 'Bob Ross',
+            likes: 48
+        }
+        
+        await api
+            .post('/api/blogs')
+            .send(newPost)
+            .expect(400)
+    })    
 })
 
-test('verifies that if the title and url properties are missing from the request data', async () => {
-    const newPost = {
-        author: 'Bob Ross',
-        likes: 48
-      }
+describe('deletion of a blog post', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
+        const blogsAtStart = await Blog.find({})
+        console.log('blogsAtStart', blogsAtStart[0].id)
+        const blogToDelete = blogsAtStart[0]
     
-    await api
-        .post('/api/blogs')
-        .send(newPost)
-        .expect(400)
+        await api
+          .delete(`/api/blogs/${blogToDelete.id}`)
+          .expect(204)
+    
+        const blogsAtEnd = await Blog.find({})
+    
+        expect(blogsAtEnd).toHaveLength(initialBlogs.length - 1)
+    
+        const titles = blogsAtEnd.map(r => r.title)
+    
+        expect(titles).not.toContain(blogToDelete.title)
+      })
 })
+
 
 afterAll(() => {
     mongoose.connection.close()
