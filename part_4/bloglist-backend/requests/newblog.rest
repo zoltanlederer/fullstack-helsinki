@@ -1,0 +1,11 @@
+post http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjYxYWRmMDY4Y2Y3MTQ0Y2M1ZjJkY2IxYyIsImlhdCI6MTYzODkxMDExOX0.volI3GOi7NulkZZcyBvEfn5sopeO6YxvHz6j5zxn4AA
+
+{
+   "title": "Earth",
+   "author": "Wayne Bruce",
+   "url": "htrps://earth.com",
+   "likes": "22"
+}
+
