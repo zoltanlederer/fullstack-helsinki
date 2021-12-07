@@ -152,3 +152,6 @@ typings/
 
 # IDE - VSCode
 .vscode/
+
+# requests test folder
+*.requests/
