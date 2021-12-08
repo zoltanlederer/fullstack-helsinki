@@ -3,6 +3,8 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 const initialBlogs = [
     {
@@ -52,6 +54,15 @@ describe('when there is initially some blog posts saved', () => {
 
 describe('addition of a new blog post', () => {
     test('a valid blog post can be added', async () => {
+        const getToken = async () => {
+            const user = await User.findOne({ username: 'root' })            
+            const userForToken = {
+                username: user.username,
+                id: user._id
+            }            
+            return 'bearer ' + jwt.sign(userForToken, process.env.SECRET)
+        }
+
         const newPost = {
             title: 'The Truth',
             author: 'Miss Hanna',
@@ -62,6 +73,7 @@ describe('addition of a new blog post', () => {
         await api
             .post('/api/blogs')
             .send(newPost)
+            .set('Authorization', await getToken())
             .expect(200)
             .expect('Content-Type', /application\/json/)
         
@@ -73,6 +85,15 @@ describe('addition of a new blog post', () => {
     })
 
     test('the likes property is missing from the request when blog post added', async () => {
+        const getToken = async () => {
+            const user = await User.findOne({ username: 'root' })            
+            const userForToken = {
+                username: user.username,
+                id: user._id
+            }            
+            return 'bearer ' + jwt.sign(userForToken, process.env.SECRET)
+        }
+
         const newPost = {
             title: 'Interstellar',
             author: 'Thomas Gilligan',
@@ -82,6 +103,7 @@ describe('addition of a new blog post', () => {
         await api
             .post('/api/blogs')
             .send(newPost)
+            .set('Authorization', await getToken())
             .expect(200)
     
         const testPost = await Blog.findOne({ title: 'Interstellar' })
@@ -89,6 +111,15 @@ describe('addition of a new blog post', () => {
     })
 
     test('verifies that if the title and url properties are missing from the request data', async () => {
+        const getToken = async () => {
+            const user = await User.findOne({ username: 'root' })            
+            const userForToken = {
+                username: user.username,
+                id: user._id
+            }            
+            return 'bearer ' + jwt.sign(userForToken, process.env.SECRET)
+        }
+
         const newPost = {
             author: 'Bob Ross',
             likes: 48
@@ -97,17 +128,34 @@ describe('addition of a new blog post', () => {
         await api
             .post('/api/blogs')
             .send(newPost)
+            .set('Authorization', await getToken())
             .expect(400)
     })    
 })
 
 describe('deletion of a blog post', () => {
     test('succeeds with status code 204 if id is valid', async () => {
+        const getToken = async () => {
+            const user = await User.findOne({ username: 'root' })            
+            const userForToken = {
+                username: user.username,
+                id: user._id
+            }            
+            return 'bearer ' + jwt.sign(userForToken, process.env.SECRET)
+        }
+
         const blogsAtStart = await Blog.find({})
         const blogToDelete = blogsAtStart[0]
+        console.log('blogToDelete', blogToDelete)
+        // console.log('blogToDelete 0', blogToDelete[0])
+        console.log('blogToDelete ID', blogToDelete.id)
+        const token = await getToken()
+        console.log('token', token)
+
     
         await api
           .delete(`/api/blogs/${blogToDelete.id}`)
+          .set('Authorization', await getToken())
           .expect(204)
     
         const blogsAtEnd = await Blog.find({})
