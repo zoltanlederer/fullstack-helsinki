@@ -5,10 +5,7 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 
 const App = () => {
-  const [notification, setNotification] = useState({
-    message: null,
-    type: null
-  })
+  const [notification, setNotification] = useState({ message: null, type: null })
   const [blogs, setBlogs] = useState([])
 
   const [username, setUsername] = useState('')
