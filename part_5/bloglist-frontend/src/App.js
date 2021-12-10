@@ -9,7 +9,6 @@ const App = () => {
     message: null,
     type: null
   })
-  // const [notificationType, setNotificationType] = useState(null)
   const [blogs, setBlogs] = useState([])
 
   const [username, setUsername] = useState('')
