@@ -15,8 +15,10 @@ const App = () => {
   const newBlogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+    blogService.getAll()
+      .then(blogs => {
+        setBlogs( blogs.sort((a, b) => b.likes - a.likes) ) 
+      }      
     )  
   }, [])
 
@@ -75,7 +77,7 @@ const App = () => {
       const updateBlog = {...blog, user: blog.user.id, likes: blog.likes + 1}
       await blogService.update(updateBlog)
       const update = await blogService.getAll()
-      setBlogs(update)  
+      setBlogs( update.sort((a, b) => b.likes - a.likes) )
     } catch (error) {
       console.log(error)
       setNotification({ message: `Sorry, Couldn't like the blog. Try again.`, type: 'warning' })
