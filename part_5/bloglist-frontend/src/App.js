@@ -70,6 +70,22 @@ const App = () => {
     }
   }
 
+  const handleLikes = async (blog) => {
+    try {
+      const updateBlog = {...blog, user: blog.user.id, likes: blog.likes + 1}
+      await blogService.update(updateBlog)
+      const update = await blogService.getAll()
+      setBlogs(update)  
+    } catch (error) {
+      console.log(error)
+      setNotification({ message: `Sorry, Couldn't like the blog. Try again.`, type: 'warning' })
+      setTimeout(() => {
+        setNotification({ message: null , type: null })
+      }, 5000)
+    }
+    
+  }
+
   const loginForm = () => (
     <LoginForm login={handleLogin} />
   )
@@ -80,7 +96,7 @@ const App = () => {
     </Togglable>
   )
 
-  
+    
   if (user === null) {
     return (
       <>
@@ -102,7 +118,7 @@ const App = () => {
       {newBlogForm()}
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLikes={handleLikes} />
       )}
       
     </div>
