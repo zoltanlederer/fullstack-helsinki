@@ -17,7 +17,7 @@ const Blog = ({ blog, handleLikes, handleDelete, currentUser }) => {
     <div style={blogStyle}>
       <div>
         {blog.title} &nbsp;
-        <button 
+        <button
           onClick={() => setHiddenDetails(!hiddenDetails)}
         >
           {hiddenDetails ? 'View' : 'Hide'}
@@ -25,7 +25,7 @@ const Blog = ({ blog, handleLikes, handleDelete, currentUser }) => {
         <div style={detailVisible}>
           {blog.url} <br />
           Likes: {blog.likes} &nbsp;
-          <button 
+          <button
             onClick={() => handleLikes(blog)}
           >
             Like
@@ -40,8 +40,8 @@ const Blog = ({ blog, handleLikes, handleDelete, currentUser }) => {
 
         </div>
       </div>
-    </div> 
-  )   
+    </div>
+  )
 }
 
 export default Blog

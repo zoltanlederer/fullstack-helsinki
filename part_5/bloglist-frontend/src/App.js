@@ -17,9 +17,8 @@ const App = () => {
   useEffect(() => {
     blogService.getAll()
       .then(blogs => {
-        setBlogs( blogs.sort((a, b) => b.likes - a.likes) ) 
-      }      
-    )  
+        setBlogs( blogs.sort((a, b) => b.likes - a.likes) )
+      })
   }, [])
 
   useEffect(() => {
@@ -35,7 +34,7 @@ const App = () => {
   const handleLogin = async login => {
     try {
       const user = await loginService.login(login)
-      window.localStorage.setItem('loggedInUser', JSON.stringify(user))      
+      window.localStorage.setItem('loggedInUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
 
@@ -44,7 +43,7 @@ const App = () => {
       setNotification({ message: 'Wrong username or password. Please try again.', type: 'warning' })
       setTimeout(() => {
         setNotification({ message: null , type: null })
-      }, 5000)      
+      }, 5000)
     }
   }
 
@@ -75,17 +74,17 @@ const App = () => {
 
   const handleLikes = async blog => {
     try {
-      const updateBlog = {...blog, user: blog.user.id, likes: blog.likes + 1}
+      const updateBlog = { ...blog, user: blog.user.id, likes: blog.likes + 1 }
       await blogService.update(updateBlog)
       const update = await blogService.getAll()
       setBlogs( update.sort((a, b) => b.likes - a.likes) )
     } catch (error) {
       console.log(error)
-      setNotification({ message: `Sorry, Couldn't like the blog. Try again.`, type: 'warning' })
+      setNotification({ message: 'Sorry, Couldn\'t like the blog. Try again.', type: 'warning' })
       setTimeout(() => {
         setNotification({ message: null , type: null })
       }, 5000)
-    }    
+    }
   }
 
   const handleDelete = async blog => {
@@ -98,15 +97,15 @@ const App = () => {
         setTimeout(() => {
           setNotification({ message: null , type: null })
         }, 5000)
-      }      
+      }
     } catch (error) {
       console.log(error)
-      setNotification({ message: `Sorry, Couldn't delete the blog. Try again.`, type: 'warning' })
+      setNotification({ message: 'Sorry, Couldn\'t delete the blog. Try again.', type: 'warning' })
       setTimeout(() => {
         setNotification({ message: null , type: null })
       }, 5000)
     }
-    
+
   }
 
   const loginForm = () => (
@@ -119,7 +118,7 @@ const App = () => {
     </Togglable>
   )
 
-    
+
   if (user === null) {
     return (
       <>
@@ -143,7 +142,7 @@ const App = () => {
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} handleLikes={handleLikes} handleDelete={handleDelete} currentUser={user}/>
       )}
-      
+
     </div>
   )
 }
