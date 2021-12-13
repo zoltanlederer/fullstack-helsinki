@@ -27,6 +27,8 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      // update Token if browser manually refreshed
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -53,7 +55,6 @@ const App = () => {
 
   const handleCreateBlog = async newBlog => {
     try {
-      blogService.setToken(user.token)
       newBlogFormRef.current.toggleVisibility()
 
       const response = await blogService.create(newBlog)
@@ -72,7 +73,7 @@ const App = () => {
     }
   }
 
-  const handleLikes = async (blog) => {
+  const handleLikes = async blog => {
     try {
       const updateBlog = {...blog, user: blog.user.id, likes: blog.likes + 1}
       await blogService.update(updateBlog)
@@ -81,6 +82,26 @@ const App = () => {
     } catch (error) {
       console.log(error)
       setNotification({ message: `Sorry, Couldn't like the blog. Try again.`, type: 'warning' })
+      setTimeout(() => {
+        setNotification({ message: null , type: null })
+      }, 5000)
+    }    
+  }
+
+  const handleDelete = async blog => {
+    try {
+      if (window.confirm(`Remove blog "${blog.title} by ${blog.author}" ?`)) {
+        await blogService.remove(blog)
+        const update = await blogService.getAll()
+        setBlogs( update.sort((a, b) => b.likes - a.likes) )
+        setNotification({ message: `You successfully deleted "${blog.title}" blog.`, type: 'notification' })
+        setTimeout(() => {
+          setNotification({ message: null , type: null })
+        }, 5000)
+      }      
+    } catch (error) {
+      console.log(error)
+      setNotification({ message: `Sorry, Couldn't delete the blog. Try again.`, type: 'warning' })
       setTimeout(() => {
         setNotification({ message: null , type: null })
       }, 5000)
@@ -120,7 +141,7 @@ const App = () => {
       {newBlogForm()}
 
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLikes={handleLikes} />
+        <Blog key={blog.id} blog={blog} handleLikes={handleLikes} handleDelete={handleDelete} currentUser={user}/>
       )}
       
     </div>
