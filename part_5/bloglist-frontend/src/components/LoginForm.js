@@ -36,7 +36,7 @@ const LoginForm = ({ login }) => {
               <button type="submit">Login</button>
           </form>
         </div>
-      )
+    )
 }
 
 export default LoginForm
