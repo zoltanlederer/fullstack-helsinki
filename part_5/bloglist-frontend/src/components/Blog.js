@@ -27,7 +27,7 @@ const Blog = ({ blog, handleLikes, handleDelete, currentUser }) => {
         <div style={detailVisible}>
           {blog.url} <br />
           Likes: {blog.likes} &nbsp;
-          <button
+          <button className='likeBtn'
             onClick={() => handleLikes(blog)}
           >
             Like

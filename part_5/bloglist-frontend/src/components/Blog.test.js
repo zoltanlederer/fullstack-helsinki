@@ -20,11 +20,13 @@ describe('Blog component test', () => {
     username: 'root'
   }
 
+  const mockHandler = jest.fn()
+
   let component
 
   beforeEach(() => {
     component = render(
-      <Blog blog={blog} currentUser={currentUser} />
+      <Blog blog={blog} currentUser={currentUser} handleLikes={mockHandler} />
     )
   })
 
@@ -40,6 +42,15 @@ describe('Blog component test', () => {
     fireEvent.click(showBtn)
     expect(component.container).toHaveTextContent('https://www.batman.com')
     expect(component.container).toHaveTextContent('62')
+  })
+
+  test('like button is clicked twice', () => {
+    const showBtn = component.getByText('View')
+    fireEvent.click(showBtn)
+    const likeBtn = component.container.querySelector('.likeBtn')
+    fireEvent.click(likeBtn)
+    fireEvent.click(likeBtn)
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 
 })
