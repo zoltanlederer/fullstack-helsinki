@@ -58,6 +58,13 @@ const App = () => {
 
       const response = await blogService.create(newBlog)
       setBlogs(blogs.concat(response))
+
+      // Update blog list on frontend
+      blogService.getAll()
+        .then(blogs => {
+          setBlogs( blogs.sort((a, b) => b.likes - a.likes) )
+        })
+
       setNotification({ message: `A new blog: ${response.title} by ${response.author} added`, type: 'notification' })
       setTimeout(() => {
         setNotification({ message: null , type: null })

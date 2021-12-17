@@ -49,6 +49,18 @@ describe('Blog app', function() {
         .should('contain', 'A new blog: Superman by Clark Kent added')
         .and('have.css', 'background-color', 'rgb(61, 185, 110)')
     })
+
+    it.only('User can like a blog', function() {
+      cy.contains('Create New Blog').click()
+      cy.get('#title').type('Superman')
+      cy.get('#author').type('Clark Kent')
+      cy.get('#url').type('https://www.superman.com')
+      cy.contains('Submit New Blog').click()
+      cy.contains('View').click()
+      cy.contains('Like').click()
+      cy.contains('Likes: 1')
+    })
+
   })
 
 })
