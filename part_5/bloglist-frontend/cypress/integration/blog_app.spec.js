@@ -34,9 +34,13 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.get('#username').type('billy')
-      cy.get('#password').type('bob')
-      cy.get('#login-btn').click()
+      cy.request('POST', 'http://localhost:3003/api/login', {
+        username: 'billy',
+        password: 'bob'
+      }).then(response => {
+        localStorage.setItem('loggedInUser', JSON.stringify(response.body))
+        cy.visit('http://localhost:3000')
+      })
     })
 
     it('A blog can be created', function() {
@@ -72,6 +76,41 @@ describe('Blog app', function() {
       cy.get('.notification')
         .should('contain', 'You successfully deleted "Superman" blog.')
         .and('have.css', 'background-color', 'rgb(61, 185, 110)')
+    })
+
+    it('Checks that the blogs are ordered according to likes with the blog with the most likes being first', function() {
+      const blog1 = {
+        title: 'Batman',
+        author: 'Bruce Wayne',
+        url: 'https://www.batman.com',
+        likes: 15
+      }
+      const blog2 = {
+        title: 'Ironman',
+        author: 'Tony Stark',
+        url: 'https://www.ironman.com',
+        likes: 45
+      }
+      const blog3 = {
+        title: 'Black Widow',
+        author: 'Natasha Romanoff',
+        url: 'https://www.ironman.com',
+        likes: 23
+      }
+
+      cy.saveBlog(blog1)
+      cy.saveBlog(blog2)
+      cy.saveBlog(blog3)
+
+      cy.contains('Ironman').contains('View').click()
+      cy.contains('Ironman').parent().should('contain', 'Likes: 45')
+
+      cy.contains('Black Widow').contains('View').click()
+      cy.contains('Black Widow').parent().should('contain', 'Likes: 23')
+
+      cy.contains('Batman').contains('View').click()
+      cy.contains('Batman').parent().should('contain', 'Likes: 15')
+
     })
 
   })
