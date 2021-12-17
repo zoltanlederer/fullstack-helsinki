@@ -32,4 +32,23 @@ describe('Blog app', function() {
     })
   })
 
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.get('#username').type('billy')
+      cy.get('#password').type('bob')
+      cy.get('#login-btn').click()
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('Create New Blog').click()
+      cy.get('#title').type('Superman')
+      cy.get('#author').type('Clark Kent')
+      cy.get('#url').type('https://www.superman.com')
+      cy.contains('Submit New Blog').click()
+      cy.get('.notification')
+        .should('contain', 'A new blog: Superman by Clark Kent added')
+        .and('have.css', 'background-color', 'rgb(61, 185, 110)')
+    })
+  })
+
 })
