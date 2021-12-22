@@ -6,6 +6,11 @@ const App = () => {
   const anecdotes = useSelector(state => state)
   const dispatch = useDispatch()
 
+  // anecdotes are ordered by the number of votes
+  anecdotes.sort((a, b) => (
+    b.votes - a.votes
+  ))
+
   const vote = (id) => {
     console.log('vote', id)
     dispatch({
