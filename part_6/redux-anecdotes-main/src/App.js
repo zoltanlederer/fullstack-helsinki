@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import NewAnecdote from './components/NewAnecdote'
+import AnecdoteForm from './components/AnecdoteForm'
 import { voteAnecdote } from './reducers/anecdoteReducer'
 
 const App = () => {
@@ -32,7 +32,7 @@ const App = () => {
         </div>
       )}
       <h2>create new</h2>
-      <NewAnecdote />
+      <AnecdoteForm />
     </div>
   )
 }
