@@ -2,6 +2,7 @@ import { createStore, combineReducers } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import anecdoteReducer from './reducers/anecdoteReducer'
 import notificationReducer from './reducers/notificationReducer'
+// import { notificationChange } from './reducers/notificationReducer'
 
 const reducer = combineReducers({
   anecdotes: anecdoteReducer,
@@ -11,5 +12,7 @@ const reducer = combineReducers({
 const store = createStore(reducer, composeWithDevTools())
 
 console.log(store.getState())
+
+// store.dispatch(notificationChange('notification message comes here'))
 
 export default store
