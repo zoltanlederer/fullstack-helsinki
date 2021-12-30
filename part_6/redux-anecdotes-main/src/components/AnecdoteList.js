@@ -19,10 +19,9 @@ const AnecdoteList = () => {
     b.votes - a.votes
   ))
 
-  const handleVote = (id, content) => {
-    console.log('VOTE')
-    dispatch(voteAnecdote(id))
-    dispatch(notificationChange(`You voted '${content.split(/\s+/).slice(0,10).join(" ")}...'`))
+  const handleVote = (anecdote) => {
+    dispatch(voteAnecdote(anecdote))
+    dispatch(notificationChange(`You voted '${anecdote.content.split(/\s+/).slice(0,10).join(" ")}...'`))
   }
 
   return (
@@ -34,7 +33,7 @@ const AnecdoteList = () => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => handleVote(anecdote.id, anecdote.content)}>vote</button>
+            <button onClick={() => handleVote(anecdote)}>vote</button>
           </div>
         </div>
       )}
