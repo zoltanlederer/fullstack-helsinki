@@ -1,5 +1,4 @@
 const notificationReducer = (state = null, action) => {
-  console.log(action)
   switch (action.type) {
     case 'SET_NOTIFICATION':
       return action.notification
@@ -10,13 +9,21 @@ const notificationReducer = (state = null, action) => {
   }
 }
 
-export const notificationChange = notification => {
-  return (
-    {
+export const setNotification = (notification, timer) => {
+  return async dispatch => {    
+    dispatch({
       type: 'SET_NOTIFICATION',
-      notification
-    }
-  )
+      notification  
+    })
+
+    setTimeout(() => {
+      dispatch({
+        type: 'HIDE',
+        notification: null
+      })
+    }, timer * 1000)
+  }
 }
+
 
 export default notificationReducer
