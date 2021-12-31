@@ -25,5 +25,4 @@ export const setNotification = (notification, timer) => {
   }
 }
 
-
 export default notificationReducer
